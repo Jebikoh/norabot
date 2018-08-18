@@ -1,0 +1,22 @@
+{
+  "name": "saucybot",
+  "version": "1.0.0",
+  "description": "A bot made for the Saucymods discord community",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bot",
+    "discord",
+    "discordjs",
+    "javascript",
+    "minecraft",
+    "mc"
+  ],
+  "author": "nitroignika",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^11.4.2"
+  }
+}
