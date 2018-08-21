@@ -18,6 +18,8 @@
   "license": "MIT",
   "dependencies": {
     "discord.js": "^11.4.2",
+    "jquery": "^3.3.1",
+    "jsdom": "^12.0.0",
     "leaguejs": "^1.10.1"
   }
 }
