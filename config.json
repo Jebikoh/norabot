@@ -1,4 +1,5 @@
 {
-  "prefix": "?",
-  "token": "insert-token-here"
+  "prefix": "insert-prefix-here",
+  "token": "insert-token-here",
+  "riotapi": "insert-api-key-here"
 }
