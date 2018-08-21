@@ -170,3 +170,6 @@ typings/
 
 # Serverless directories
 .serverless
+
+#venv
+venv/
