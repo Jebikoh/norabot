@@ -96,3 +96,11 @@ fabric.properties
 
 # To not leak token
 config.json
+
+venv
+.idea/misc.xml
+.idea/modules.xml
+.idea/norabot.iml
+.idea/vcs.xml
+node_modules/leaguejs/StaticDataDefaultRoot/
+venv/include/

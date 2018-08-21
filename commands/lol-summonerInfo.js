@@ -25,7 +25,6 @@ module.exports = {
                 summonerLevel = data.summonerLevel;
 
                 let summonerIconURL = "http://ddragon.leagueoflegends.com/cdn/8.16.1/img/profileicon/" + summonerIcon + ".png";
-                console.log(summonerIconURL);
 
                 const embed = new Discord.RichEmbed()
                     .setTitle(`**` + summonerName + `**`)

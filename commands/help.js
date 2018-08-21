@@ -1,21 +1,31 @@
 const { prefix } = require('../config.json');
+const Discord = require('discord.js');
 
 module.exports = {
     name: 'help',
     description: 'Lists all commands, or specific info for a command',
     aliases: ['commands'],
     usage: '[command name]',
-    cooldown: 5,
+    cooldown: 0,
     execute(message, args) {
         const data = [];
         const { commands } = message.client;
 
-        if (!args.length) {
-            data.push('List of commands:');
-            data.push("```" + commands.map(command => command.name).join('\n') + "```");
-            data.push(`\nUse \`${prefix}help [command name]\` to get info on a specific command`);
+        const embedInitial = new Discord.RichEmbed()
+            .setTitle(`**List of Commands:**`)
+            .setDescription(`\nUse \`${prefix}help [command name]\` to get info on a specific command`)
+            .setColor(0x00AE86)
+            .setTimestamp();
 
-            return message.author.send(data, { split: true })
+        if (!args.length) {
+            commandList = commands.map(command => command.name);
+            commandDescription = commands.map(command => command.description);
+
+            for ( var i = 0; i < commandList.length; i++) {
+                embedInitial.addField("**" + commandList[i] + "**:", commandDescription[i]);
+            }
+
+            return message.author.send(embedInitial)
                 .then(() => {
                     if (message.channel.type === 'dm') return;
                     message.reply(`Help is in your DM's!`);
@@ -33,14 +43,15 @@ module.exports = {
             return message.reply(`Sorry, that's not a valid command`);
         }
 
-        data.push(`**Name:** ${command.name}`);
+        const embed = new Discord.RichEmbed()
+            .setTitle(`**${command.name}**`)
+            .setColor(0x00AE86)
+            .setTimestamp();
+        if (command.aliases) embed.addField("**Aliases:**", command.aliases);
+        if (command.description) embed.addField("**Description:**", command.description);
+        if (command.usage) embed.addField("**Usage:**", command.usage);
+        if (command.cooldown) embed.addField("**Cooldown:**", command.cooldown);
 
-        if(command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
-        if (command.description) data.push(`**Description:** ${command.description}`);
-        if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
-
-        data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
-
-        message.channel.send(data, { split: true });
+        message.channel.send(embed);
     },
 };
