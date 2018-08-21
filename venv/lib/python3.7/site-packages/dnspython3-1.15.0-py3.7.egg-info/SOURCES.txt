@@ -1,0 +1,9 @@
+LICENSE
+MANIFEST.in
+setup.cfg
+setup.py
+dnspython3.egg-info/PKG-INFO
+dnspython3.egg-info/SOURCES.txt
+dnspython3.egg-info/dependency_links.txt
+dnspython3.egg-info/requires.txt
+dnspython3.egg-info/top_level.txt

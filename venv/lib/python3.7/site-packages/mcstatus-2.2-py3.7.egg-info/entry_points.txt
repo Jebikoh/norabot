@@ -1,0 +1,4 @@
+
+        [console_scripts]
+        mcstatus=mcstatus.scripts.mcstatus:cli
+    

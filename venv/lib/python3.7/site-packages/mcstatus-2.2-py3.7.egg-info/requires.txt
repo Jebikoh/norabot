@@ -1,0 +1,3 @@
+six
+Click
+dnspython3

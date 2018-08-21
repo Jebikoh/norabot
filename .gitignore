@@ -93,3 +93,6 @@ fabric.properties
 
 # Sonarlint plugin
 .idea/sonarlint
+
+# To not leak token
+config.json
