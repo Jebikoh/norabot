@@ -18,22 +18,30 @@ var $ = jQuery = require('jquery')(window);
 module.exports = {
     name: 'lol-champ',
     description: 'Retrieves information about a specific champion',
-    aliases: ['lolcmp'],
+    aliases: ['lolc'],
     usage: `[command champion]`,
     execute(message, args) {
-        // Get the latest patch version from datadragon's version.json
-        var jsonLink;
-        var championJSON;
-        let championName = args[0];
+        let patch;
+        // let championName = args[0];
 
-        $.getJSON('https://ddragon.leagueoflegends.com/api/versions.json', function(data) {
-            handleDataDragon(data);
-        });
-
-        function handleDataDragon(data) {
-            var patch = data[0];
-            let jsonLink = "http://ddragon.leagueoflegends.com/cdn/" + patch + "/data/en_US/champion/" + championName + ".json";
-
+        function getVersionJson() {
+            return new Promise(function (resolve, reject) {
+                $.getJSON('https://ddragon.leagueoflegends.com/api/versions.json', function(error, data) {
+                    if (error) return reject(error);
+                    resolve(data);
+                });
+            });
         }
+
+        async function generateJsonLink() {
+            try {
+                patch = await getVersionJson();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        generateJsonLink();
+        console.log(patch[0]);
     }
 };
