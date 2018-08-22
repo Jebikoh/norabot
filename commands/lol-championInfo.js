@@ -36,12 +36,12 @@ module.exports = {
         async function generateJsonLink() {
             try {
                 patch = await getVersionJson();
+                console.log(patch[0]);
             } catch (error) {
                 console.error(error);
             }
         }
 
         generateJsonLink();
-        console.log(patch[0]);
     }
 };
