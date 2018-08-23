@@ -4,7 +4,7 @@
 
 An in-development, all-in-one discord bot. Currently has plans for league of legends, minecraft, and maplestory support. Future games may be supported
 
-## License
+## License: AGPL-3.0+
 
 ```
 Copyright 2018 by nitroignika
