@@ -3,6 +3,7 @@ module.exports = {
     description: 'Delete up to 99 messages',
     aliases: ['p'],
     usage: `[command amount]`,
+    group: 'Admin',
     execute(message, args) {
         const amount = parseInt(args[0]) + 1;
 

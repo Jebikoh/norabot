@@ -2,7 +2,7 @@ process.env.LEAGUE_API_PLATFORM_ID = 'na1'
 
 const Discord = require('discord.js');
 
-const { riotapi } = require('../config.json');
+const { riotapi } = require('../../config.json');
 
 const LeagueJs = require('leaguejs');
 const LeagueJsInstance = new LeagueJs(riotapi);
@@ -12,6 +12,7 @@ module.exports = {
     description: 'Get basic profile information',
     aliases: ['lolusr'],
     usage: `[command username]`,
+    group: 'LoL',
     execute(message, args) {
         let summonerIcon, summonerName, summonerLevel;
 

@@ -20,8 +20,8 @@ module.exports = {
     description: 'Retrieves information about a specific champion',
     aliases: ['lolc'],
     usage: `[command champion]`,
+    group: 'LoL',
     execute(message, args) {
-        let patch;
         // let championName = args[0];
 
         function getVersionJson() {
@@ -35,7 +35,7 @@ module.exports = {
 
         async function generateJsonLink() {
             try {
-                patch = await getVersionJson();
+                let patch = await getVersionJson();
                 console.log(patch[0]);
             } catch (error) {
                 console.error(error);

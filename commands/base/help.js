@@ -1,4 +1,4 @@
-const { prefix } = require('../config.json');
+const { prefix } = require('../../config.json');
 const Discord = require('discord.js');
 
 module.exports = {
@@ -7,8 +7,8 @@ module.exports = {
     aliases: ['commands'],
     usage: '[command name]',
     cooldown: 0,
+    group: 'Basic',
     execute(message, args) {
-        const data = [];
         const { commands } = message.client;
 
         const embedInitial = new Discord.RichEmbed()
@@ -18,11 +18,25 @@ module.exports = {
             .setTimestamp();
 
         if (!args.length) {
-            commandList = commands.map(command => command.name);
-            commandDescription = commands.map(command => command.description);
+            let commandList = commands.map(command => { return {name: command.name, group: command.group} });
+            let commandGroups = commands.map(command => command.group).filter(onlyUnique);
 
-            for ( var i = 0; i < commandList.length; i++) {
-                embedInitial.addField("**" + commandList[i] + "**:", commandDescription[i]);
+            function onlyUnique(value, index, self) {
+                return self.indexOf(value) === index;
+            }
+
+            for (i = 0; i < commandGroups.length; i++) {
+                let currentGroup = commandGroups[i];
+                let groupCommands = [];
+
+                for (x = 0; x < commandList.length; x++) {
+                    if (commandList[x]["group"] === currentGroup) {
+                        groupCommands.push(commandList[x]["name"]);
+                    }
+                }
+
+                let embedFieldBody = "`" + groupCommands.join("`, `") + "`";
+                embedInitial.addField(currentGroup, embedFieldBody);
             }
 
             return message.author.send(embedInitial)
