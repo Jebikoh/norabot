@@ -4,8 +4,9 @@
 
 An in-development, all-in-one discord bot. Currently has plans for league of legends, minecraft, and maplestory support. Future games may be supported
 
-## License
+## License: AGPL-3.0+
 
+```
 Copyright 2018 by nitroignika
 
 norabot is free software: you can redistribute 
@@ -22,3 +23,5 @@ You should have received a copy of the GNU General Public License
 along with norabot.  If not, see <http://www.gnu.org/licenses/>.
 
 @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
+```
+
