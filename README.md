@@ -6,7 +6,8 @@ An in-development, all-in-one discord bot. Currently has plans for league of leg
 
 ## License
 
-```Copyright 2018 by nitroignika
+```
+Copyright 2018 by nitroignika
 
 norabot is free software: you can redistribute 
 it and/or modify it under the terms of the GNU Affero General Public 
