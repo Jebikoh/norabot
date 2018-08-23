@@ -6,7 +6,7 @@ An in-development, all-in-one discord bot. Currently has plans for league of leg
 
 ## License
 
-Copyright 2018 by nitroignika
+```Copyright 2018 by nitroignika
 
 norabot is free software: you can redistribute 
 it and/or modify it under the terms of the GNU Affero General Public 
@@ -21,4 +21,4 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with norabot.  If not, see <http://www.gnu.org/licenses/>.
 
-@license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
+@license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>```
