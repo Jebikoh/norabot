@@ -21,10 +21,9 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
-
 const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const { token } = require('./config.json');
 
 const cooldowns = new Discord.Collection();
 
@@ -45,15 +44,43 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
+    const { commands } = message.client;
 
-    const args = message.content.slice(prefix.length).split(/ +/);
+    // Get a unique list of all prefixes
+    let commandPrefixes = commands.map(command => command.prefix).filter(onlyUnique);
+    let output = [];
+
+    function onlyUnique(value, index, self) {
+        return self.indexOf(value) === index;
+    }
+
+    if (!startsWithAny(message.content, commandPrefixes) || message.author.bot) return;
+
+    function startsWithAny(string, prefixes) {
+        for (i = 0; i < prefixes.length; i++) {
+            if (string.startsWith(prefixes[i])) {
+                output.push(prefixes[i]);
+                break;
+            } else {
+                 continue;
+            }
+        }
+        if (output.length === 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    const args = message.content.slice(output[0].length).split(/ +/);
     const commandName = args.shift().toLowerCase();
 
     const command = client.commands.get(commandName)
         || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return;
+
+    if (command.prefix != output[0]) return;
 
     if (command.guildOnly && message.channel.type !== 'text') {
         return message.reply("Sorry, but you can only use that command on servers!")
@@ -63,7 +90,7 @@ client.on('message', message => {
         let reply = `You didn't provide the necessary arguments, ${message.author}! `;
 
         if (command.usage) {
-            reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
+            reply += `\nThe proper usage would be: \`${command.prefix}${command.name} ${command.usage}\``;
         }
 
         return message.channel.send(reply)

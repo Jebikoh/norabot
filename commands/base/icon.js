@@ -21,12 +21,15 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
+const { prefix } = require('../../config.json');
+
 module.exports = {
     name: 'icon',
     description: 'Get the icon URL of the specified user/yourself',
     aliases: ['avatar'],
     usage: `[command user]`,
     group: 'Basic',
+    prefix: 'b' + prefix,
     execute(message) {
         if (!message.mentions.users.size) {
             return message.channel.send(`Your icon: ${message.author.displayAvatarURL}`);

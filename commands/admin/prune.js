@@ -21,12 +21,15 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
+const { prefix } = require('../../config.json');
+
 module.exports = {
     name: 'prune',
     description: 'Delete up to 99 messages',
     aliases: ['p'],
     usage: `[command amount]`,
     group: 'Admin',
+    prefix: 'a' + prefix,
     execute(message, args) {
         const amount = parseInt(args[0]) + 1;
 

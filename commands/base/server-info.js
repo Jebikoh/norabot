@@ -21,7 +21,7 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
-
+const { prefix } = require('../../config.json');
 const Discord = require('discord.js');
 
 module.exports = {
@@ -30,6 +30,7 @@ module.exports = {
     aliases: ['g'],
     usage: `[command]`,
     group: 'Basic',
+    prefix: 'b' + prefix,
     execute(message) {
         const embed = new Discord.RichEmbed()
             .setTitle(`**${message.guild.name}**`)

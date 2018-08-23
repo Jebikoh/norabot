@@ -21,6 +21,7 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
+const { prefix } = require('../../config.json');
 
 module.exports = {
     name: 'ping',
@@ -28,7 +29,8 @@ module.exports = {
     aliases: ['p'],
     usage: `[command]`,
     group: 'Basic',
-    execute(message, args) {
+    prefix: 'b' + prefix,
+    execute(message) {
         message.channel.send('Pong!')
     },
 };

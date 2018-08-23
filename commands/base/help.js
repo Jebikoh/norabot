@@ -21,7 +21,6 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
-
 const { prefix } = require('../../config.json');
 const Discord = require('discord.js');
 
@@ -32,17 +31,18 @@ module.exports = {
     usage: '[command name]',
     cooldown: 0,
     group: 'Basic',
+    prefix: 'b' + prefix,
     execute(message, args) {
         const { commands } = message.client;
 
         const embedInitial = new Discord.RichEmbed()
             .setTitle(`**List of Commands:**`)
-            .setDescription(`\nUse \`${prefix}help [command name]\` to get info on a specific command`)
+            .setDescription(`\nUse \`b?help [command name]\` to get info on a specific command`)
             .setColor(0x00AE86)
             .setTimestamp();
 
         if (!args.length) {
-            let commandList = commands.map(command => { return {name: command.name, group: command.group} });
+            let commandList = commands.map(command => { return {name: command.name, group: command.group, prefix: command.prefix} });
             let commandGroups = commands.map(command => command.group).filter(onlyUnique);
 
             function onlyUnique(value, index, self) {
@@ -51,16 +51,18 @@ module.exports = {
 
             for (i = 0; i < commandGroups.length; i++) {
                 let currentGroup = commandGroups[i];
+                let groupPrefix = [];
                 let groupCommands = [];
 
                 for (x = 0; x < commandList.length; x++) {
                     if (commandList[x]["group"] === currentGroup) {
                         groupCommands.push(commandList[x]["name"]);
+                        groupPrefix.push(commandList[x]["prefix"]);
                     }
                 }
 
                 let embedFieldBody = "`" + groupCommands.join("`, `") + "`";
-                embedInitial.addField(currentGroup, embedFieldBody);
+                embedInitial.addField(currentGroup + " (`" + groupPrefix[0] + "`)", embedFieldBody);
             }
 
             return message.author.send(embedInitial)
