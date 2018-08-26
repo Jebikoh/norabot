@@ -29,7 +29,6 @@ module.exports = {
     description: 'Get information about the current server',
     aliases: ['g'],
     usage: `[command]`,
-    group: 'Basic',
     execute(message) {
         const embed = new Discord.RichEmbed()
             .setTitle(`**${message.guild.name}**`)

@@ -21,37 +21,47 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
-
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
+const commandConfig = require('./commands.json');
 
-const cooldowns = new Discord.Collection();
+const client = new Discord.Client({sync: true});
 
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
-
+client.prefixes = new Discord.Collection();
 const commandFolders = fs.readdirSync('./commands');
 for (const folder of commandFolders) {
+    const commands = new Discord.Collection();
     const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
     for (const file of commandFiles) {
         const command = require(`./commands/${folder}/${file}`);
-        client.commands.set(command.name, command);
+        commands.set(command.name, command);
     }
+    client.prefixes.set(commandConfig[folder].prefix, commands);
+    commands.set('name', commandConfig[folder].prefix);
 }
+
+const cooldowns = new Discord.Collection();
 
 client.on('ready', () => {
     console.log('Ready!');
 });
 
 client.on('message', message => {
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
+    if (message.author.bot) return;
+    let commandType;
+    for (const prefixCollection of client.prefixes) {
+        if (message.content.startsWith(prefixCollection[1].get('name') + prefix)) {
+            commandType = prefixCollection[1].get('name');
+        }
+    }
+    if (!commandType) return;
 
-    const args = message.content.slice(prefix.length).split(/ +/);
+    const args = message.content.slice(commandType.length + prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
 
-    const command = client.commands.get(commandName)
-        || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+    const command = client.prefixes.get(commandType).get(commandName)
+        || client.prefixes.get(commandType).find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return;
 

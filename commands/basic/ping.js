@@ -21,21 +21,13 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
+
 module.exports = {
-    name: 'icon',
-    description: 'Get the icon URL of the specified user/yourself',
-    aliases: ['avatar'],
-    usage: `[command user]`,
-    group: 'Basic',
+    name: 'ping',
+    description: 'A basic ping command to test bot availability',
+    aliases: ['p'],
+    usage: `[command]`,
     execute(message) {
-        if (!message.mentions.users.size) {
-            return message.channel.send(`Your icon: ${message.author.displayAvatarURL}`);
-        }
-
-        const avatarList = message.mentions.users.map(user => {
-            return `${user.username}'s icon: ${user.displayAvatarURL}`;
-        });
-
-        message.channel.send(avatarList);
-      }
+        message.channel.send('Pong!')
+    },
 };

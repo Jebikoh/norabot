@@ -1,0 +1,10 @@
+{
+  "admin": {
+    "prefix": "a",
+    "group": "Admin"
+  },
+  "basic": {
+    "prefix": "b",
+    "group": "Basic"
+  }
+}

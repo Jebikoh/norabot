@@ -21,9 +21,10 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
-
 const { prefix } = require('../../config.json');
+const commandConfig = require('../../commands.json');
 const Discord = require('discord.js');
+const fs = require('fs');
 
 module.exports = {
     name: 'help',
@@ -31,7 +32,6 @@ module.exports = {
     aliases: ['commands'],
     usage: '[command name]',
     cooldown: 0,
-    group: 'Basic',
     execute(message, args) {
         const { commands } = message.client;
 
@@ -42,25 +42,18 @@ module.exports = {
             .setTimestamp();
 
         if (!args.length) {
-            let commandList = commands.map(command => { return {name: command.name, group: command.group} });
-            let commandGroups = commands.map(command => command.group).filter(onlyUnique);
-
-            function onlyUnique(value, index, self) {
-                return self.indexOf(value) === index;
-            }
-
-            for (i = 0; i < commandGroups.length; i++) {
-                let currentGroup = commandGroups[i];
-                let groupCommands = [];
-
-                for (x = 0; x < commandList.length; x++) {
-                    if (commandList[x]["group"] === currentGroup) {
-                        groupCommands.push(commandList[x]["name"]);
-                    }
+            const commandFolders = fs.readdirSync('./commands/');
+            for (const folder of commandFolders) {
+                let commandList = [];
+                const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
+                console.log(commandFiles);
+                for (const file of commandFiles) {
+                    const command = require(`../${folder}/${file}`);
+                    commandList.push(command.name);
                 }
-
-                let embedFieldBody = "`" + groupCommands.join("`, `") + "`";
-                embedInitial.addField(currentGroup, embedFieldBody);
+                let groupConfig = commandConfig[folder];
+                let embedFieldBody = "`" + commandList.join("`, `") + "`";
+                embedInitial.addField(groupConfig.group + " (`" + groupConfig.prefix + prefix + "`)", embedFieldBody);
             }
 
             return message.author.send(embedInitial)
