@@ -108,8 +108,14 @@ client.on('message', message => {
     }
     catch (error) {
         console.error(error);
-        message.reply('Sorry, something went wrong! If the issue persists, please contact a developer')
+        message.reply('Sorry, something went wrong! If the issue persists, please contact a developer').then(msg => {
+            msg.delete(8000);
+        }).catch(err => {
+           console.log(err);
+        });
+        message.delete(8000);
     }
 });
 
 client.login(token);
+process.on('unhandledRejection', console.error);

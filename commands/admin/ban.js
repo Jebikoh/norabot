@@ -22,27 +22,30 @@
  */
 
 module.exports = {
-    name: 'prune',
-    description: 'Delete up to 99 messages',
-    aliases: ['p'],
-    usage: `[command amount]`,
-    execute(message, args) {
+    name: 'ban',
+    description: "Bans a user",
+    aliases: ['b'],
+    usage: `[command user]`,
+    execute(message) {
         if (message.member.hasPermission("ADMINISTRATOR")) {
-            const amount = parseInt(args[0]) + 1;
-
-            if (isNaN(amount)) {
-                return message.reply('That is not a valid number.');
+            const user = message.mentions.users.first();
+            if (user) {
+                const member = message.guild.member(user);
+                if (member) {
+                    member.ban({ reason: 'An administrator has requested to ban this user' }).then(() => {
+                        message.reply(`I have banned the following user: ${user.tag}`);
+                    }).catch(err => {
+                        message.reply('I was unable to ban the member');
+                        console.error(err);
+                    });
+                } else {
+                    message.reply("Sorry, I couldn't find that person");
+                }
+            } else {
+                message.reply("Sorry, you didn't mention anyone to ban!");
             }
-            else if (amount <= 1 || amount > 100) {
-                return message.reply('The number must be between 1 and 99.');
-            }
-
-            message.channel.bulkDelete(amount, true).catch(err => {
-                console.error(err);
-                message.channel.send('Sorry, an error occured. If the problem persists, contact the developer');
-            });
         } else {
-            message.reply('Sorry, you do not has sufficient permissions to use this command!');
+            message.reply("Sorry, seems like you don't have the required permissions!");
         }
     }
 };

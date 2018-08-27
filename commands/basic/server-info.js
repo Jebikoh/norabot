@@ -21,7 +21,6 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
-
 const Discord = require('discord.js');
 
 module.exports = {

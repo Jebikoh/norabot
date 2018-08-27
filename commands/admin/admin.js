@@ -22,15 +22,15 @@
  */
 
 module.exports = {
-    name: 'ping',
-    description: 'A basic ping command to test bot availability',
-    aliases: ['p'],
+    name: 'haveadmin',
+    description: 'Check to see if you have admin privaleges',
+    aliases: ['ha'],
     usage: `[command]`,
     execute(message) {
-        message.channel.send('Pong!').then(msg => {
-            msg.delete(5000);
-        }).catch(err => {
-            console.log(err);
-        });
-    },
+        if (message.member.hasPermission("ADMINISTRATOR")) {
+            message.reply("yes");
+        } else {
+            message.reply("no");
+        }
+    }
 };

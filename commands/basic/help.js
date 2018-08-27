@@ -46,7 +46,6 @@ module.exports = {
             for (const folder of commandFolders) {
                 let commandList = [];
                 const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
-                console.log(commandFiles);
                 for (const file of commandFiles) {
                     const command = require(`../${folder}/${file}`);
                     commandList.push(command.name);
