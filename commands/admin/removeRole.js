@@ -21,6 +21,8 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
+const { deleteTimer }  = require("../../commands.json");
+
 module.exports = {
     name: 'removeroles',
     description: 'Remove role(s) from a user',
@@ -29,7 +31,7 @@ module.exports = {
     execute(message, args) {
         if (message.channel.type === 'dm') {
             message.reply("You have to be on a server!").then(msg => {
-                msg.delete(10000);
+                msg.delete(deleteTimer);
             }).catch(err => {
                 console.log(err)
             });
@@ -45,7 +47,7 @@ module.exports = {
             const member = message.mentions.members.first();
             if (member === undefined) {
                 message.reply("You didn't specify a user!").then(msg => {
-                    msg.delete(8000);
+                    msg.delete(deleteTimer);
                 }).catch(err => {
                     console.log(err);
                 });
@@ -70,24 +72,24 @@ module.exports = {
 
             if (able.length > 0) {
                 message.reply("I removed the following roles: " + '`' + able.join('`, `') + '`').then(msg => {
-                    msg.delete(10000);
+                    msg.delete(deleteTimer);
                 }).catch(err => {
                     console.log(err);
                 });
             } if (prexist.length > 0) {
                 message.reply("The user doesn't have the following roles already: " + '`' + prexist.join('`, `') + '`').then(msg => {
-                    msg.delete(10000);
+                    msg.delete(deleteTimer);
                 }).catch(err => {
                     console.log(err);
                 });
             } if (unable.length > 0) {
                 message.reply("I was unable to remove the following roles. Please check your spelling or permissions before trying again: " + '`' + unable.join('`, `') + '`').then(msg => {
-                    msg.delete(10000);
+                    msg.delete(deleteTimer);
                 }).catch(err => {
                     console.log(err);
                 });
             }
-            message.delete(10000);
+            message.delete(deleteTimer);
         } else {
             message.reply("Sorry, you don't have the necessary permissions!");
         }

@@ -21,6 +21,8 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
+const { deleteTimer }  = require("../../commands.json");
+
 module.exports = {
     name: 'admin',
     description: 'Check to see if you have admin privaleges',
@@ -29,10 +31,11 @@ module.exports = {
     execute(message) {
         if (message.channel.type === 'dm') {
             message.reply("Of course you're an admin in your own DM!").then(msg => {
-                msg.delete(10000);
+                msg.delete(deleteTimer);
             }).catch(err => {
                 console.log(err)
             });
+            message.delete(deleteTimer);
 
             return;
         }

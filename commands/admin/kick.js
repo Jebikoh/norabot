@@ -21,6 +21,8 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
+const { deleteTimer }  = require("../../commands.json");
+
 module.exports = {
     name: 'kick',
     description: "Kicks a user",
@@ -29,7 +31,7 @@ module.exports = {
     execute(message) {
         if (message.channel.type === 'dm') {
             message.reply("You have to be on a server!").then(msg => {
-                msg.delete(10000);
+                msg.delete(deleteTimer);
             }).catch(err => {
                 console.log(err)
             });

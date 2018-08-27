@@ -6,5 +6,6 @@
   "basic": {
     "prefix": "b",
     "group": "Basic"
-  }
+  },
+  "deleteTimer": 10000
 }
