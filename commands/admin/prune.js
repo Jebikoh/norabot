@@ -27,6 +27,16 @@ module.exports = {
     aliases: ['p'],
     usage: `[command amount]`,
     execute(message, args) {
+        if (message.channel.type === 'dm') {
+            message.reply("You have to be on a server!").then(msg => {
+                msg.delete(10000);
+            }).catch(err => {
+                console.log(err)
+            });
+
+            return;
+        }
+
         if (message.member.hasPermission("ADMINISTRATOR")) {
             const amount = parseInt(args[0]) + 1;
 

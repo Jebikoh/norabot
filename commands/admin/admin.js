@@ -22,11 +22,20 @@
  */
 
 module.exports = {
-    name: 'haveadmin',
+    name: 'admin',
     description: 'Check to see if you have admin privaleges',
-    aliases: ['ha'],
+    aliases: ['ad'],
     usage: `[command]`,
     execute(message) {
+        if (message.channel.type === 'dm') {
+            message.reply("Of course you're an admin in your own DM!").then(msg => {
+                msg.delete(10000);
+            }).catch(err => {
+                console.log(err)
+            });
+
+            return;
+        }
         if (message.member.hasPermission("ADMINISTRATOR")) {
             message.reply("yes");
         } else {

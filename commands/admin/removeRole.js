@@ -27,6 +27,16 @@ module.exports = {
     aliases: ['rr'],
     usage: `[command user role(s)]`,
     execute(message, args) {
+        if (message.channel.type === 'dm') {
+            message.reply("You have to be on a server!").then(msg => {
+                msg.delete(10000);
+            }).catch(err => {
+                console.log(err)
+            });
+
+            return;
+        }
+
         if (message.member.hasPermission("ADMINISTRATOR")) {
             let unable = [];
             let able = [];

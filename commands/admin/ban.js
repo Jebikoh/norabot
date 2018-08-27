@@ -27,6 +27,16 @@ module.exports = {
     aliases: ['b'],
     usage: `[command user]`,
     execute(message) {
+        if (message.channel.type === 'dm') {
+            message.reply("You have to be on a server!").then(msg => {
+                msg.delete(10000);
+            }).catch(err => {
+                console.log(err)
+            });
+
+            return;
+        }
+
         if (message.member.hasPermission("ADMINISTRATOR")) {
             const user = message.mentions.users.first();
             if (user) {
