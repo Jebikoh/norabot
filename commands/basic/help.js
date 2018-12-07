@@ -33,7 +33,8 @@ module.exports = {
     usage: '[command name]',
     cooldown: 0,
     execute(message, args) {
-        const { commands } = message.client;
+        var commands = new Map();
+        var aliases = new Map();
 
         const embedInitial = new Discord.RichEmbed()
             .setTitle(`**List of Commands:**`)
@@ -41,20 +42,27 @@ module.exports = {
             .setColor(0x00AE86)
             .setTimestamp();
 
-        if (!args.length) {
-            const commandFolders = fs.readdirSync('./commands/');
-            for (const folder of commandFolders) {
-                let commandList = [];
-                const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
-                for (const file of commandFiles) {
-                    const command = require(`../${folder}/${file}`);
-                    commandList.push(command.name);
+        const commandFolders = fs.readdirSync('./commands/');
+        for (const folder of commandFolders) {
+            let commandList = [];
+            const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
+            for (const file of commandFiles) {
+                const command = require(`../${folder}/${file}`);
+                commandList.push(command.name);
+                if(!commands.has(command.name)) {
+                    commands.set(command.name, command);
+                    command.aliases.forEach(element => {
+                        aliases.set(element, command);
+                    });
                 }
-                let groupConfig = commandConfig[folder];
-                let embedFieldBody = "`" + commandList.join("`, `") + "`";
-                embedInitial.addField(groupConfig.group + " (`" + groupConfig.prefix + prefix + "`)", embedFieldBody);
             }
+            let groupConfig = commandConfig[folder];
+            let embedFieldBody = "`" + commandList.join("`, `") + "`";
+            embedInitial.addField(groupConfig.group + " (`" + groupConfig.prefix + prefix + "`)", embedFieldBody);
+        }
 
+
+        if (!args.length) {
             return message.author.send(embedInitial)
                 .then(() => {
                     if (message.channel.type === 'dm') return;
@@ -67,7 +75,7 @@ module.exports = {
         }
 
         const name = args[0].toLowerCase();
-        const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
+        const command = commands.get(name) || aliases.get(name);
 
         if (!command) {
             return message.reply(`Sorry, that's not a valid command`);

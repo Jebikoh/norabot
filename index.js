@@ -25,6 +25,7 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
 const commandConfig = require('./commands.json');
+const Sequelize = require('sequelize');
 
 const client = new Discord.Client({sync: true});
 
@@ -43,8 +44,34 @@ for (const folder of commandFolders) {
 
 const cooldowns = new Discord.Collection();
 
+const sequelize = new Sequelize('database', 'user', 'password', {
+    host: 'localhost',
+    dialect: 'sqlite',
+    logging: false,
+    operatorsAliases: false,
+    // SQLite only
+    storage: 'database.sqlite',
+});
+
+const Tags = sequelize.define('tags', {
+    name: {
+        type: Sequelize.STRING,
+        unique: true,
+    },
+    description: Sequelize.TEXT,
+    username: Sequelize.STRING,
+    usage_count: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+    },
+});
+
+module.exports.tags = Tags;
+
 client.on('ready', () => {
     console.log('Ready!');
+    Tags.sync().then(console.log("Synced!"));
 });
 
 client.on('message', message => {
@@ -109,11 +136,17 @@ client.on('message', message => {
     catch (error) {
         console.error(error);
         message.reply('Sorry, something went wrong! If the issue persists, please contact a developer').then(msg => {
-            msg.delete(8000);
+            if(message.channel.type != 'dm') {
+                msg.delete(8000)
+            }
         }).catch(err => {
            console.log(err);
         });
-        message.delete(8000);
+        message.delete(8000).then(msg => {
+            if(message.channel.type != 'dm') {
+                msg.delete(8000);
+            }
+        });
     }
 });
 

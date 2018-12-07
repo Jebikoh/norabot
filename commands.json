@@ -7,5 +7,9 @@
     "prefix": "b",
     "group": "Basic"
   },
+  "tags": {
+    "prefix": "t",
+    "group": "Tags"
+  },
   "deleteTimer": 10000
 }

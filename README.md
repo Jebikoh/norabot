@@ -4,6 +4,13 @@
 
 An in-development, all-in-one discord bot. Currently has plans for league of legends, minecraft, and maplestory support. Future games may be supported
 
+# Roadmap
+1. Custom Database for Custom Server Parameters (Welcome message, etc)
+2. Revamped addroles
+3. Server Welcome Message
+4. Voice
+5. LoL Support
+
 ## License: AGPL-3.0+
 
 ```
