@@ -8,8 +8,11 @@ An in-development, all-in-one discord bot. Currently has plans for league of leg
 1. Custom Database for Custom Server Parameters (Welcome message, etc) (✓)
 2. Revamped addroles
 3. Server Welcome Message
+-- v0.3.0 RELEASE --
 4. Voice
+-- v0.4.0 RELEASE --
 5. LoL Support
+-- v0.5.0 RELEASE --
 
 ## License: AGPL-3.0+
 
