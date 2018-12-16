@@ -54,20 +54,18 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 });
 
 const Tags = sequelize.define('tags', {
-    name: {
+    guildid: {
         type: Sequelize.STRING,
         unique: true,
     },
-    description: Sequelize.TEXT,
-    username: Sequelize.STRING,
-    usage_count: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-        allowNull: false,
+    defchan: {
+        type: Sequelize.TEXT,
+        unique: true,
     },
 });
 
 module.exports.tags = Tags;
+module.exports.client = client;
 
 client.on('ready', () => {
     console.log('Ready!');
@@ -94,6 +92,10 @@ client.on('message', message => {
 
     if (command.guildOnly && message.channel.type !== 'text') {
         return message.reply("Sorry, but you can only use that command on servers!")
+    }
+
+    if (command.adminReq && !message.member.hasPermission("ADMINISTRATOR")) {
+        return message.reply("You don't have the adequate permissions!");
     }
 
     if (command.args && !args.length) {

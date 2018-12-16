@@ -28,36 +28,24 @@ module.exports = {
     description: "Kicks a user",
     aliases: ['k'],
     usage: `[command user]`,
+    guildOnly: true,
+    adminReq: true,
     execute(message) {
-        if (message.channel.type === 'dm') {
-            message.reply("You have to be on a server!").then(msg => {
-                msg.delete(deleteTimer);
-            }).catch(err => {
-                console.log(err)
-            });
-
-            return;
-        }
-
-        if (message.member.hasPermission("ADMINISTRATOR")) {
-            const user = message.mentions.users.first();
-            if (user) {
-                const member = message.guild.member(user);
-                if (member) {
-                    member.kick('An administrator has requested to kick this user').then(() => {
-                        message.reply(`I have kicked the following user: ${user.tag}`);
-                    }).catch(err => {
-                        message.reply('I was unable to kick the member');
-                        console.error(err);
-                    });
-                } else {
-                    message.reply("Sorry, I couldn't find that person");
-                }
+        const user = message.mentions.users.first();
+        if (user) {
+            const member = message.guild.member(user);
+            if (member) {
+                member.kick('An administrator has requested to kick this user').then(() => {
+                    message.reply(`I have kicked the following user: ${user.tag}`);
+                }).catch(err => {
+                    message.reply('I was unable to kick the member');
+                    console.error(err);
+                });
             } else {
-                message.reply("Sorry, you didn't mention anyone to kick!");
+                message.reply("Sorry, I couldn't find that person");
             }
         } else {
-            message.reply("Sorry, seems like you don't have the required permissions!");
+            message.reply("Sorry, you didn't mention anyone to kick!");
         }
     }
 };

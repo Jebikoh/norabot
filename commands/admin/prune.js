@@ -28,49 +28,33 @@ module.exports = {
     description: 'Delete up to 99 messages',
     aliases: ['p'],
     usage: `[command amount]`,
+    guildOnly: true,
+    adminReq: true,
     execute(message, args) {
-        if (message.channel.type === 'dm') {
-            message.reply("You have to be on a server!").then(msg => {
-                msg.delete(deleteTimer);
-            }).catch(err => {
-                console.log(err)
-            });
+        const amount = parseInt(args[0]) + 1;
 
-            return;
-        }
-
-        if (message.member.hasPermission("ADMINISTRATOR")) {
-            const amount = parseInt(args[0]) + 1;
-
-            if (isNaN(amount)) {
-                return message.reply('That is not a valid number.').then(msg => {
-                   msg.delete(deleteTimer)
-                }).catch(err => {
-                    console.log(err);
-                })
-            }
-            else if (amount <= 1 || amount > 100) {
-                return message.reply('The number must be between 1 and 99.').then(msg => {
-                    msg.delete(deleteTimer)
-                }).catch(err => {
-                    console.log(err);
-                })
-            }
-
-            message.channel.bulkDelete(amount, true).catch(err => {
-                console.error(err);
-                message.channel.send('Sorry, an error occured. If the problem persists, contact the developer').then(msg => {
-                    msg.delete(deleteTimer)
-                }).catch(err => {
-                    console.log(err);
-                })
-            });
-        } else {
-            message.reply('Sorry, you do not has sufficient permissions to use this command!').then(msg => {
+        if (isNaN(amount)) {
+            return message.reply('That is not a valid number.').then(msg => {
                 msg.delete(deleteTimer)
             }).catch(err => {
                 console.log(err);
             })
         }
+        else if (amount <= 1 || amount > 100) {
+            return message.reply('The number must be between 1 and 99.').then(msg => {
+                msg.delete(deleteTimer)
+            }).catch(err => {
+                console.log(err);
+            })
+        }
+
+        message.channel.bulkDelete(amount, true).catch(err => {
+            console.error(err);
+            message.channel.send('Sorry, an error occured. If the problem persists, contact the developer').then(msg => {
+                msg.delete(deleteTimer)
+            }).catch(err => {
+                console.log(err);
+            })
+        });
     }
 };
