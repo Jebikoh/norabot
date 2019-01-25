@@ -2,7 +2,7 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
-An in-development, all-in-one discord bot. Currently has plans for league of legends, minecraft, and maplestory support. Future games may be supported
+An in-development, all-in-one discord bot. Currently has plans for league of legends and maplestory support. Future games may be supported
 
 # Roadmap
 1. Custom Database for Custom Server Parameters (Welcome message, etc) (✓)
@@ -13,6 +13,8 @@ An in-development, all-in-one discord bot. Currently has plans for league of leg
 **v0.4.0 RELEASE**
 5. LoL Support </br>
 **v0.5.0 RELEASE**
+6. Maplestory Support </br>
+**v0.6.0 RELEASE**
 
 ## License: AGPL-3.0+
 

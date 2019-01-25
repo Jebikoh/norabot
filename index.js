@@ -53,10 +53,12 @@ const sequelize = new Sequelize('database', 'user', 'password', {
     storage: 'database.sqlite',
 });
 
+// Define Database
 const Tags = sequelize.define('tags', {
     guildid: {
         type: Sequelize.STRING,
         unique: true,
+        allowNull: false,
     },
     defchan: {
         type: Sequelize.TEXT,
@@ -72,9 +74,21 @@ client.on('ready', () => {
     Tags.sync().then(console.log("Synced!"));
 });
 
+client.on('guildMemberAdd', member => {  
+    const tags = await Tags.findOne({ where: { guildid: message.guild.id } });
+
+    if(guildDB) {
+        const channel = member.guild.channels.get(tags.get('defchan'));
+        channel.send(`Welcome to the server, ${member}!`);
+    }
+});
+
 client.on('message', message => {
     if (message.author.bot) return;
+
     let commandType;
+
+    // Find the command group the the command belongs to
     for (const prefixCollection of client.prefixes) {
         if (message.content.startsWith(prefixCollection[1].get('name') + prefix)) {
             commandType = prefixCollection[1].get('name');
@@ -82,22 +96,27 @@ client.on('message', message => {
     }
     if (!commandType) return;
 
+    // Get possible arguments & command name used (full name or alias)
     const args = message.content.slice(commandType.length + prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
 
+    // Check if the command exists under the command type (full name of alias)
     const command = client.prefixes.get(commandType).get(commandName)
         || client.prefixes.get(commandType).find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return;
 
+    // Handle guild-only commands
     if (command.guildOnly && message.channel.type !== 'text') {
         return message.reply("Sorry, but you can only use that command on servers!")
     }
 
+    // Handle administrator-only commands
     if (command.adminReq && !message.member.hasPermission("ADMINISTRATOR")) {
         return message.reply("You don't have the adequate permissions!");
     }
 
+    // Handle insufficient arguments
     if (command.args && !args.length) {
         let reply = `You didn't provide the necessary arguments, ${message.author}! `;
 
@@ -108,6 +127,7 @@ client.on('message', message => {
         return message.channel.send(reply)
     }
 
+    // Handle commands w/o cooldowns
     if (!cooldowns.has(command.name)) {
         cooldowns.set(command.name, new Discord.Collection());
     }
@@ -116,10 +136,12 @@ client.on('message', message => {
     const timestamps = cooldowns.get(command.name);
     const cooldownAmount = (command.cooldown) * 1000;
 
+    // Start cooldown for commands w/ cooldowns
     if (!timestamps.has(message.author.id)) {
         timestamps.set(message.author.id, now);
         setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
     }
+    // Handle commands w/ cooldowns
     else {
         const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
 
@@ -132,6 +154,7 @@ client.on('message', message => {
         setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
     }
 
+    // Execute the command
     try {
         command.execute(message, args);
     }
