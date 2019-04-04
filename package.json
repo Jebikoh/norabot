@@ -4,7 +4,9 @@
   "description": "The best discord",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node_modules/.bin/webpack --config webpack.config.js",
+    "start": "npx ts-node index.ts"
   },
   "keywords": [
     "bot",
@@ -15,11 +17,23 @@
   "author": "nitroignika",
   "license": "MIT",
   "dependencies": {
+    "@types/args": "^3.0.0",
     "discord.js": "^11.4.2",
+    "fs": "0.0.1-security",
     "jquery": "^3.3.1",
     "jsdom": "^12.0.0",
-    "leaguejs": "^1.10.1",
     "sequelize": "^4.41.2",
     "sqlite3": "^4.0.4"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.3.29",
+    "@types/jsdom": "^12.2.1",
+    "@types/sequelize": "^4.27.34",
+    "@types/sqlite3": "^3.1.3",
+    "json-loader": "^0.5.7",
+    "ts-loader": "^5.3.3",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.3.3333",
+    "webpack": "^4.29.0"
   }
 }
