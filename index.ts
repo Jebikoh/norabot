@@ -25,12 +25,11 @@ import * as fs from 'fs';
 import * as Discord from 'discord.js';
 import * as Sequelize from 'sequelize';
 
-const { prefix, token }: {prefix: string, token: string} = require("./config.json");
+// const { prefix, token }: {prefix: string, token: string} = require("./config.json");
+import { prefix, token} from './config.json';
 import commandConfig from './commands.json';
-
 export class Command {
     public name: string;
-    
 }
 
 const client: Discord.Client = new Discord.Client({sync: true});
