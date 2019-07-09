@@ -32,7 +32,7 @@ module.exports = {
     aliases: ['commands'],
     usage: '[command name]',
     cooldown: 0,
-    args: true,
+    argsRequired: false,
     execute(message, args) {
         var commands = new Map();
         var aliases = new Map();

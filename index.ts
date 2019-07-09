@@ -23,12 +23,12 @@
 
 import * as fs from 'fs';
 import * as Discord from 'discord.js';
-import * as Sequelize from 'sequelize';
-
-// const { prefix, token }: {prefix: string, token: string} = require("./config.json");
-import { prefix, token} from './config.json';
+import { prefix, token, deleteTimer} from './config.json';
 import commandConfig from './commands.json';
-import { isUndefined, isString, isNull } from 'util';
+import { isUndefined, isNull, isString, isNumber } from './utils';
+
+const commandCfg: { [index:string] : {prefix: string, group: string} } = commandConfig
+
 export class Command {
     name: string;
     description: string;
@@ -37,7 +37,7 @@ export class Command {
     guildOnly: boolean;
     adminReq: boolean;
     cooldown: number;
-    args: boolean;
+    argsRequired: boolean;
     execute: (message: Discord.Message, args?: string[]) => void;
     constructor(props: {
         name: string,
@@ -47,7 +47,7 @@ export class Command {
         guildOnly: boolean;
         adminReq: boolean;
         cooldown: number;
-        args: boolean;
+        argsRequired: boolean;
         execute: (message: Discord.Message, args?: string[]) => void;
     }) {
         this.name = props.name;
@@ -58,7 +58,7 @@ export class Command {
         this.adminReq = props.adminReq;
         this.execute = props.execute;
         this.cooldown = props.cooldown;
-        this.args = props.args;
+        this.argsRequired = props.argsRequired;
     }
 }
 
@@ -70,6 +70,7 @@ export class NoraClient extends Discord.Client {
         this.prefixes = new Discord.Collection();
         const commandFolders: string[] = fs.readdirSync('./commands');
 
+        console.log("Cooking up commands...")
         for (const folder of commandFolders) {
             const commands: Discord.Collection<string, any> = new Discord.Collection();
             const commandFiles: string[] = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
@@ -77,31 +78,27 @@ export class NoraClient extends Discord.Client {
             const command: any = require(`./commands/${folder}/${file}`);
             commands.set(command.name, command);
         }
-        this.prefixes.set(commandConfig[folder].prefix, commands);
-        commands.set('name', commandConfig[folder].prefix);
+        this.prefixes.set(commandCfg[folder].prefix, commands);
+        commands.set('name', commandCfg[folder].prefix);
         }
+        console.log("Sending client off to college...");
     }
 }
 
-console.log("Generating client...");
+console.log("Growing a client...");
 const client = new NoraClient({sync: true});
 
 
 const cooldowns:Discord.Collection<string,Discord.Collection<string,number>> = new Discord.Collection();    
 
 client.on('ready', () => {
-    console.log('Ready!');
-
-    // Tags.sync().then(() => console.log("Synced!"));
+    console.log('Client is ready!');
 });
 
 client.on('message', message => {
     if (message.author.bot) return;
 
     let commandType: string | undefined;
-
-    // Find the command group the the command belongs to
-    // TODO: Bug! Cannot read property 'get' of undefined
 
     for(const prefixes of client.prefixes) {
         if(message.content.startsWith(prefixes[1].get('name') + prefix)) {
@@ -147,11 +144,11 @@ client.on('message', message => {
     }
 
     // Handle insufficient arguments
-    if (command.args && !args.length) {
+    if (command.argsRequired && !args.length) {
         let reply = `You didn't provide the necessary arguments, ${message.author}! `;
 
         if (command.usage) {
-            reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
+            reply += `\nThe proper usage would be: \`${commandType}${prefix}${command.name} ${command.usage}\``;
         }
 
         return message.channel.send(reply)
@@ -167,22 +164,28 @@ client.on('message', message => {
     const cooldownAmount = (command.cooldown) * 1000;
 
     // Start cooldown for commands w/ cooldowns
-    if (!timestamps.has(message.author.id)) {
-        timestamps.set(message.author.id, now);
-        setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-    }
-    // Handle commands w/ cooldowns
-    else {
-        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
-
-        if (now < expirationTime) {
-            const timeLeft = (expirationTime - now) / 1000;
-            return message.reply(`Please wait ${timeLeft.toFixed(1)} before trying again`);
+    if(!isUndefined(timestamps)) {
+        if (!timestamps.has(message.author.id)) {
+            timestamps.set(message.author.id, now);
+            setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
         }
-
-        timestamps.set(message.author.id, now);
-        setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+        // Handle commands w/ cooldowns
+        else {
+            const userCooldown: number | undefined = timestamps.get(message.author.id)
+            //  + cooldownAmount;
+            if(isNumber(userCooldown)) {
+                const expirationTime = userCooldown + cooldownAmount;
+                if (now < expirationTime) {
+                    const timeLeft = (expirationTime - now) / 1000;
+                    return message.reply(`Please wait ${timeLeft.toFixed(1)} before trying again`);
+                }
+            }
+    
+            timestamps.set(message.author.id, now);
+            setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+        }
     }
+
 
     // Execute the command
     try {
@@ -190,16 +193,21 @@ client.on('message', message => {
     }
     catch (error) {
         console.error(error);
-        message.reply('Sorry, something went wrong! If the issue persists, please contact a developer').then((msg:Discord.Message) => {
+        message.reply('Sorry, something went wrong! If the issue persists, please contact a developer')
+        .then((msg : Discord.Message | Discord.Message[]) => {
             if(message.channel.type != 'dm') {
-                msg.delete(8000)
+                if(msg instanceof Array) {
+                    for(message of msg) {
+                        message.delete(deleteTimer);
+                    }
+                } else {
+                    msg.delete(deleteTimer)
+                }
             }
-        }).catch(err => {
-           console.log(err);
         });
-        message.delete(8000).then(msg => {
+        message.delete(deleteTimer).then(msg => {
             if(message.channel.type != 'dm') {
-                msg.delete(8000);
+                msg.delete(deleteTimer);
             }
         });
     }
