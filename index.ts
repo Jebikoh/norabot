@@ -28,53 +28,66 @@ import * as Sequelize from 'sequelize';
 // const { prefix, token }: {prefix: string, token: string} = require("./config.json");
 import { prefix, token} from './config.json';
 import commandConfig from './commands.json';
+import { isUndefined, isString, isNull } from 'util';
 export class Command {
-    public name: string;
-}
-
-const client: Discord.Client = new Discord.Client({sync: true});
-
-// REPLACE ANY
-const prefixes: Discord.Collection<string, any> = new Discord.Collection();
-
-const commandFolders: string[] = fs.readdirSync('./commands');
-for (const folder of commandFolders) {
-    const commands: Discord.Collection<string, any> = new Discord.Collection();
-    const commandFiles: string[] = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
-    for (const file of commandFiles) {
-        const command: any = require(`./commands/${folder}/${file}`);
-        commands.set(command.name, command);
+    name: string;
+    description: string;
+    aliases: string[] | undefined;
+    usage: string;
+    guildOnly: boolean;
+    adminReq: boolean;
+    cooldown: number;
+    args: boolean;
+    execute: (message: Discord.Message, args?: string[]) => void;
+    constructor(props: {
+        name: string,
+        description: string;
+        aliases: string[] | undefined;
+        usage: string;
+        guildOnly: boolean;
+        adminReq: boolean;
+        cooldown: number;
+        args: boolean;
+        execute: (message: Discord.Message, args?: string[]) => void;
+    }) {
+        this.name = props.name;
+        this.description = props.description;
+        this.aliases = props.aliases;
+        this.usage = props.usage;
+        this.guildOnly = props.guildOnly;
+        this.adminReq = props.adminReq;
+        this.execute = props.execute;
+        this.cooldown = props.cooldown;
+        this.args = props.args;
     }
-    prefixes.set(commandConfig[folder].prefix, commands);
-    commands.set('name', commandConfig[folder].prefix);
 }
 
-const cooldowns:Discord.Collection<string,Discord.Collection<string,number>> = new Discord.Collection();
+export class NoraClient extends Discord.Client {
+    handler: any; //Rip no types in reaction-core
+    prefixes: Discord.Collection<string, Discord.Collection<string, string | Command>>;
+    constructor(props: Discord.ClientOptions) {
+        super(props);
+        this.prefixes = new Discord.Collection();
+        const commandFolders: string[] = fs.readdirSync('./commands');
 
-// const sequelize = new Sequelize('database', 'user', 'password', {
-//     host: 'localhost',
-//     dialect: 'sqlite',
-//     logging: false,
-//     operatorsAliases: false,
-//     // SQLite only
-//     storage: 'database.sqlite',
-// });
+        for (const folder of commandFolders) {
+            const commands: Discord.Collection<string, any> = new Discord.Collection();
+            const commandFiles: string[] = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
+        for (const file of commandFiles) {
+            const command: any = require(`./commands/${folder}/${file}`);
+            commands.set(command.name, command);
+        }
+        this.prefixes.set(commandConfig[folder].prefix, commands);
+        commands.set('name', commandConfig[folder].prefix);
+        }
+    }
+}
 
-// // Define Database
-// const Tags = sequelize.define('tags', {
-//     guildid: {
-//         type: Sequelize.STRING,
-//         unique: true,
-//         allowNull: false,
-//     },
-//     defchan: {
-//         type: Sequelize.TEXT,
-//         unique: true,
-//     },
-// });
+console.log("Generating client...");
+const client = new NoraClient({sync: true});
 
-// module.exports.tags = Tags;
-// module.exports.client = client;
+
+const cooldowns:Discord.Collection<string,Discord.Collection<string,number>> = new Discord.Collection();    
 
 client.on('ready', () => {
     console.log('Ready!');
@@ -88,23 +101,40 @@ client.on('message', message => {
     let commandType: string | undefined;
 
     // Find the command group the the command belongs to
-    prefixes.forEach(function(prefixCollection){
-        if(message.content.startsWith(prefixCollection[1].get('name') + prefix)) {
-            commandType = prefixCollection[1].get('name');
-        }
-    });
+    // TODO: Bug! Cannot read property 'get' of undefined
 
-    if (!commandType) return;
+    for(const prefixes of client.prefixes) {
+        if(message.content.startsWith(prefixes[1].get('name') + prefix)) {
+            commandType = prefixes[1].get('name') as string;
+        }
+    }
+
+    if (isUndefined(commandType)) return;
 
     // Get possible arguments & command name used (full name or alias)
-    const args = message.content.slice(commandType.length + prefix.length).split(/ +/);
-    const commandName = args.shift().toLowerCase();
+    const args: string[] = message.content
+        .slice(commandType.length + prefix.length)
+        .split(/ +/);
 
+    const _commandName: string | undefined = args.shift()
+    if (!_commandName) return;
+    const commandName: string = _commandName.toLowerCase();
+
+    const possibleCommands: Discord.Collection<string, string | Command> | undefined = client.prefixes.get(commandType);
+    if(isUndefined(possibleCommands)) return;
     // Check if the command exists under the command type (full name of alias)
-    const command = prefixes.get(commandType).get(commandName)
-        || prefixes.get(commandType).find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+    // const command = client.prefixes.get(commandType).get(commandName)
+    //     || client.prefixes.get(commandType).find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
-    if (!command) return;
+    const command = (
+        possibleCommands.get(commandName) ||
+        possibleCommands.find((cmd: string | Command) => {
+            if(isString(cmd)) return false;
+            if(cmd.aliases && cmd.aliases.includes(commandName)) return true;
+            else return false;
+        })) as Command;
+
+    if (isNull(command)) return;
 
     // Handle guild-only commands
     if (command.guildOnly && message.channel.type !== 'text') {
