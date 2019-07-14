@@ -173,3 +173,4 @@ typings/
 
 #venv
 venv/
+.vscode/settings.json

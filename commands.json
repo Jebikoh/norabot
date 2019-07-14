@@ -10,6 +10,5 @@
   "tags": {
     "prefix": "t",
     "group": "Tags"
-  },
-  "deleteTimer": 10000
+  }
 }

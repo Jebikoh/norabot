@@ -17,20 +17,24 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with norabot.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
+t * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
+import { Message } from "discord.js";
+import { deleteMessage } from "./../../utils";
+
 module.exports = {
-    name: 'ping',
-    description: 'A basic ping command to test bot availability',
-    aliases: ['p'],
-    usage: `[command]`,
-    execute(message) {
-        message.channel.send('Pong!').then(msg => {
-            msg.delete(5000);
-        }).catch(err => {
-            console.log(err);
-        });
-    },
+  name: "ping",
+  description: "A basic ping command to test bot availability",
+  aliases: ["p"],
+  usage: `b?ping`,
+  guildOnly: false,
+  adminRequired: false,
+  argsRequired: false,
+  execute(message: Message) {
+    message.channel.send("Pong!").then(msg => {
+      deleteMessage(msg);
+    });
+    deleteMessage(message);
+  }
 };

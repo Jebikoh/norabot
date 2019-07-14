@@ -1,5 +1,6 @@
 {
   "prefix": "?",
-  "token": "INSERT-TOKEN-HERE",
-  "riotapi": "insert-api-key-here"
+  "token": "NDc1ODQzNTY2MDAzMDI3OTY4.XKaS7g.K2sDuCa48ymIhkOgNWeXGxty22I",
+  "riotapi": "insert-api-key-here",
+  "deleteTimer": 10000
 }

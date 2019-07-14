@@ -21,27 +21,24 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
-const { deleteTimer }  = require("../../commands.json");
+import { Message } from "discord.js";
 
 module.exports = {
-    name: 'admin',
-    description: 'Check to see if you have admin privaleges',
-    aliases: ['ad'],
-    usage: `[command]`,
-    execute(message) {
-        if (message.channel.type === 'dm') {
-            message.reply("Of course you're an admin in your own DM!").then(msg => {
-                msg.delete(deleteTimer);
-            }).catch(err => {
-                console.log(err)
-            });
-
-            return;
-        }
-        if (message.member.hasPermission("ADMINISTRATOR")) {
-            message.reply("yes");
-        } else {
-            message.reply("no");
-        }
+  name: "icon",
+  description: "Get the icon URL of the specified user/yourself",
+  aliases: ["avatar"],
+  usage: `b?icon [@user]`,
+  execute(message: Message) {
+    if (!message.mentions.users.size) {
+      return message.channel.send(
+        `Your icon: ${message.author.displayAvatarURL}`
+      );
     }
+
+    const avatarList = message.mentions.users.map(user => {
+      return `${user.username}'s icon: ${user.displayAvatarURL}`;
+    });
+
+    message.channel.send(avatarList);
+  }
 };
