@@ -21,20 +21,30 @@
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
+import { Message } from "discord.js";
+
 module.exports = {
-    name: 'icon',
-    description: 'Get the icon URL of the specified user/yourself',
-    aliases: ['avatar'],
-    usage: `[command user]`,
-    execute(message) {
-        if (!message.mentions.users.size) {
-            return message.channel.send(`Your icon: ${message.author.displayAvatarURL}`);
-        }
-
-        const avatarList = message.mentions.users.map(user => {
-            return `${user.username}'s icon: ${user.displayAvatarURL}`;
-        });
-
-        message.channel.send(avatarList);
+  name: "ban",
+  description: "Bans a user",
+  aliases: ["b"],
+  usage: `a?ban [@user]`,
+  guildOnly: true,
+  adminReq: true,
+  execute(message: Message) {
+    const user = message.mentions.users.first();
+    if (user) {
+      const member = message.guild.member(user);
+      if (member) {
+        member
+          .ban({ reason: "An administrator has requested to ban this user" })
+          .then(() => {
+            message.reply(`I have banned the following user: ${user.tag}`);
+          });
+      } else {
+        message.reply("Sorry, I couldn't find that person");
       }
+    } else {
+      message.reply("Sorry, you didn't mention anyone to ban!");
+    }
+  }
 };

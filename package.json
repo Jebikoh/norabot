@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node_modules/.bin/webpack --config webpack.config.js",
-    "start": "npx ts-node index.ts"
+    "start": "nodemon"
   },
   "keywords": [
     "bot",
@@ -22,8 +22,10 @@
     "fs": "0.0.1-security",
     "jquery": "^3.3.1",
     "jsdom": "^12.0.0",
+    "nodemon": "^1.19.1",
     "sequelize": "^4.41.2",
-    "sqlite3": "^4.0.4"
+    "sqlite3": "^4.0.4",
+    "watch": "^1.0.2"
   },
   "devDependencies": {
     "@types/jquery": "^3.3.29",
@@ -35,5 +37,10 @@
     "ts-node": "^8.0.3",
     "typescript": "^3.3.3333",
     "webpack": "^4.29.0"
+  },
+  "nodemonConfig": {
+    "watch": ["commands", "index.ts"],
+    "ext": "ts",
+    "exec": "ts-node ./index.ts"
   }
 }
