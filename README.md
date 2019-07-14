@@ -2,20 +2,19 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
-An in-development, all-in-one discord bot. Currently has plans for league of legends and maplestory support. Future games may be supported
+An in-development, all-in-one discord bot.
 
 # Roadmap
-
-1. Custom Database for Custom Server Parameters (Welcome message, etc) (✓)
    **v1.1.0 RELEASE**
-2. Voice </br>
+ - Voice </br>
    **v1.2.0 RELEASE**
-3. Revamped addroles
-4. Server Welcome Message </br>
+ - Revamped addroles
+ - Server Welcome Message </br>
+ - Custom Database for Custom Server Parameters (Welcome message, etc) (✓) </br>
    **v1.3.0 RELEASE**
-5. LoL Support </br>
+ - LoL Support </br>
    **v1.4.0 RELEASE**
-6. Maplestory Support </br>
+ - Maplestory Support </br>
 
 ## License: AGPL-3.0+
 
