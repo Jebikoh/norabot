@@ -27,7 +27,7 @@ module.exports = {
   name: "icon",
   description: "Get the icon URL of the specified user/yourself",
   aliases: ["avatar"],
-  usage: `b?icon [@user]`,
+  usage: `b?icon [@user(s)]`,
   execute(message: Message) {
     if (!message.mentions.users.size) {
       return message.channel.send(
