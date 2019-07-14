@@ -39,7 +39,10 @@
     "webpack": "^4.29.0"
   },
   "nodemonConfig": {
-    "watch": ["commands", "index.ts"],
+    "watch": [
+      "commands",
+      "index.ts"
+    ],
     "ext": "ts",
     "exec": "ts-node ./index.ts"
   }
