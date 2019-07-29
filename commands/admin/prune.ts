@@ -45,7 +45,7 @@ module.exports = {
       const bulkDeleteMessages: Message[] = [];
 
       messages.forEach((message: Message) => {
-        if (dateDifference(message.createdAt.getTime(), currentDate) > 14) {
+        if (dateDifference(message.createdAt.getTime(), currentDate) >= 14) {
           deleteMessage(message);
         } else {
           bulkDeleteMessages.push(message);

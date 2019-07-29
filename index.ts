@@ -1,3 +1,4 @@
+import { VoiceConnection } from "discord.js";
 /**
  * norabot: a multi-purpose Discord bot
  *
@@ -32,6 +33,10 @@ import {
   deleteMessage
 } from "./utils";
 import commandConfig from "./commands.json";
+
+export let servers: {
+  [guildId: string]: { queue: string[]; dispatcher?: Discord.StreamDispatcher };
+} = {};
 
 export const commandCfg: {
   [index: string]: { prefix: string; group: string };
@@ -81,7 +86,6 @@ export class NoraClient extends Discord.Client {
     this.prefixes = new Discord.Collection();
     const commandFolders: string[] = fs.readdirSync("./commands");
 
-    console.log("Cooking up commands...");
     for (const folder of commandFolders) {
       const commands: Discord.Collection<
         string,
@@ -97,11 +101,9 @@ export class NoraClient extends Discord.Client {
       this.prefixes.set(commandCfg[folder].prefix, commands);
       commands.set("name", commandCfg[folder].prefix);
     }
-    console.log("Sending client off to college...");
   }
 }
 
-console.log("Growing a client...");
 const client = new NoraClient({ sync: true });
 
 const cooldowns: Discord.Collection<
