@@ -17,43 +17,38 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with norabot.  If not, see <http://www.gnu.org/licenses/>.
- *
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
 import { Message } from "discord.js";
-import { dateDifference, deleteMessage } from "../../utils";
+import { servers } from "../../index";
+import { isUndefined } from "../../utils";
 
 module.exports = {
-  name: "prune",
-  description: "Delete up to 99 messages",
-  aliases: ["p"],
-  usage: `a?prune [amount]`,
+  name: "pause",
+  description: "Pause whatever the bot is playing.",
+  aliases: ["pa"],
+  usage: `v?pause`,
   guildOnly: true,
-  adminReq: true,
-  execute(message: Message, args: string[]) {
-    const amount = parseInt(args[0]) + 1;
+  adminRequired: false,
+  argsRequired: false,
+  execute(message: Message) {
+    if (message.member.voiceChannel) {
+      if (!servers[message.guild.id]) {
+        servers[message.guild.id] = { queue: [] };
 
-    if (isNaN(amount)) {
-      return message.reply("That is not a valid number.");
-    } else if (amount <= 1 || amount > 100) {
-      return message.reply("The number must be between 1 and 99.");
-    }
+        message.reply("Nothing is playing!");
+      } else {
+        let server = servers[message.guild.id];
 
-    message.channel.fetchMessages({ limit: amount }).then(messages => {
-      const currentDate = Date.now();
-      const bulkDeleteMessages: Message[] = [];
-
-      messages.forEach((message: Message) => {
-        if (dateDifference(message.createdAt.getTime(), currentDate) >= 14) {
-          deleteMessage(message);
+        if (!isUndefined(server.dispatcher) && !server.dispatcher.paused) {
+          server.dispatcher.pause();
         } else {
-          bulkDeleteMessages.push(message);
+          message.reply("Nothing to pause!");
         }
-      });
-
-      // This works!
-      message.channel.bulkDelete(bulkDeleteMessages);
-    });
+      }
+    } else {
+      message.reply("You aren't in a voice channel!");
+    }
   }
 };

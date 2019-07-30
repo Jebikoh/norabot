@@ -10,5 +10,9 @@
   "tags": {
     "prefix": "t",
     "group": "Tags"
+  },
+  "voice": {
+    "prefix": "v",
+    "group": "Voice"
   }
 }
