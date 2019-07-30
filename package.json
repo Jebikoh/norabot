@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node_modules/.bin/webpack --config webpack.config.js",
-    "start": "nodemon"
+    "dev": "nodemon",
+    "start": "ts-node index.ts"
   },
   "keywords": [
     "bot",
