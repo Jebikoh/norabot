@@ -43,6 +43,8 @@ module.exports = {
 
         if (!isUndefined(server.dispatcher) && !server.dispatcher.paused) {
           server.dispatcher.pause();
+        } else {
+          message.reply("Nothing to pause!");
         }
       }
     } else {

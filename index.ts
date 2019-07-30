@@ -35,7 +35,10 @@ import {
 import commandConfig from "./commands.json";
 
 export let servers: {
-  [guildId: string]: { queue: string[]; dispatcher?: Discord.StreamDispatcher };
+  [guildId: string]: {
+    queue: { url: string; title: string }[];
+    dispatcher?: Discord.StreamDispatcher;
+  };
 } = {};
 
 export const commandCfg: {

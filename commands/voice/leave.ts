@@ -33,7 +33,7 @@ module.exports = {
   execute(message: Message) {
     if (message.guild.me.voiceChannel) {
       message.guild.me.voiceChannel.leave();
-      message.reply("Goodbye!");
+      message.reply("goodbye!");
     } else {
       message.reply("Doesn't seem like I'm in a voice channel!");
     }

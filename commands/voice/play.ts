@@ -23,26 +23,17 @@
 import { Message, VoiceConnection, RichEmbed } from "discord.js";
 import ytdl from "ytdl-core";
 import { servers } from "../../index";
-import { isValidUrl } from "../../utils";
+import { isValidUrl, isUndefined } from "../../utils";
 
 function play(connection: VoiceConnection, message: Message) {
   let server = servers[message.guild.id];
-  ytdl.getInfo(server.queue[0]).then(info => {
-    const thumbnails = info.player_response.videoDetails.thumbnail.thumbnails;
-    const hqThumbnail = thumbnails[thumbnails.length - 1].url;
-    const embed = new RichEmbed()
-      .setTitle(info.title)
-      .setAuthor(info.author.name, info.author.avatar)
-      .setThumbnail(hqThumbnail)
-      .setURL(server.queue[0]);
-    message.channel.send(embed);
-  });
+
   server.dispatcher = connection.playStream(
-    ytdl(server.queue[0], { filter: "audioonly" })
+    ytdl(server.queue[0].url, { filter: "audioonly", quality: "highestaudio" })
   );
 
-  server.queue.shift();
   server.dispatcher.on("end", () => {
+    server.queue.shift();
     if (server.queue[0]) {
       play(connection, message);
     } else {
@@ -68,11 +59,55 @@ module.exports = {
           servers[message.guild.id] = { queue: [] };
         }
         let server = servers[message.guild.id];
-        server.queue.push(args[0]);
 
-        message.member.voiceChannel.join().then(connection => {
-          play(connection, message);
-        });
+        message.channel.send("🔎 searching for `" + args[0] + "`...");
+
+        // Send the embed
+        ytdl
+          .getInfo(args[0])
+          .then(info => {
+            server.queue.push({
+              url: args[0],
+              title: info.player_response.videoDetails.title
+            });
+
+            const thumbnails =
+              info.player_response.videoDetails.thumbnail.thumbnails;
+            const hqThumbnail = thumbnails[thumbnails.length - 1].url;
+            const minutes = Math.trunc(
+              info.player_response.videoDetails.lengthSeconds / 60
+            );
+            const seconds =
+              info.player_response.videoDetails.lengthSeconds % 60;
+
+            const embed = new RichEmbed()
+              .setTitle(info.player_response.videoDetails.title)
+              .setAuthor(info.author.name, info.author.avatar)
+              .setThumbnail(hqThumbnail)
+              .setURL(args[0])
+              .setColor("#ff0000")
+              .addField("Length", minutes + ":" + seconds, true)
+              .addField(
+                "Viewcount",
+                info.player_response.videoDetails.viewCount
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+                true
+              )
+              .addField("Position in Queue", server.queue.length, true);
+
+            message.channel.send(embed);
+          })
+          .then(() => {
+            // If the server dispatcher is undefined (meaning nothing is playing
+            // Otherwise, the song will be added to the queue, and the currently running
+            // play command will move onto it
+            if (isUndefined(server.dispatcher)) {
+              message.member.voiceChannel.join().then(connection => {
+                play(connection, message);
+              });
+            }
+          });
       } else {
         message.reply("You aren't in a voice channel!");
       }

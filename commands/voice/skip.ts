@@ -25,10 +25,10 @@ import { servers } from "../../index";
 import { isUndefined } from "../../utils";
 
 module.exports = {
-  name: "resume",
-  description: "Resume whatever the bot is playing",
-  aliases: ["r"],
-  usage: `v?resume`,
+  name: "skip",
+  description: "Skip to the next song in queue",
+  aliases: ["s"],
+  usage: `v?skip`,
   guildOnly: true,
   adminRequired: false,
   argsRequired: false,
@@ -37,12 +37,12 @@ module.exports = {
       if (!servers[message.guild.id]) {
         servers[message.guild.id] = { queue: [] };
 
-        message.reply("Nothing is paused!");
+        message.reply("Nothing in queue!");
       } else {
         let server = servers[message.guild.id];
 
-        if (!isUndefined(server.dispatcher) && server.dispatcher.paused) {
-          server.dispatcher.resume();
+        if (!isUndefined(server.dispatcher)) {
+          server.dispatcher.end();
         }
       }
     } else {

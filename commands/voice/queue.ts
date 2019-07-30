@@ -17,36 +17,41 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with norabot.  If not, see <http://www.gnu.org/licenses/>.
- * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
+t * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
-import { Message } from "discord.js";
+import { Message, RichEmbed } from "discord.js";
 import { servers } from "../../index";
-import { isUndefined } from "../../utils";
+import ytdl from "ytdl-core";
 
 module.exports = {
-  name: "resume",
-  description: "Resume whatever the bot is playing",
-  aliases: ["r"],
-  usage: `v?resume`,
+  name: "queue",
+  description: "Display the bot's queue for your server",
+  aliases: ["q"],
+  usage: `v?queue`,
   guildOnly: true,
   adminRequired: false,
   argsRequired: false,
   execute(message: Message) {
-    if (message.member.voiceChannel) {
-      if (!servers[message.guild.id]) {
-        servers[message.guild.id] = { queue: [] };
+    if (!servers[message.guild.id]) {
+      servers[message.guild.id] = { queue: [] };
+    }
 
-        message.reply("Nothing is paused!");
-      } else {
-        let server = servers[message.guild.id];
+    let server = servers[message.guild.id];
 
-        if (!isUndefined(server.dispatcher) && server.dispatcher.paused) {
-          server.dispatcher.resume();
-        }
-      }
+    if (server.queue.length == 0) {
+      message.reply("The queue is empty!");
     } else {
-      message.reply("You aren't in a voice channel!");
+      const queueEmbed = new RichEmbed()
+        .setTitle("Server Queue")
+        .setAuthor(message.guild.name, message.guild.iconURL)
+        .setColor("#30ff7c");
+
+      for (let i = 0; i < server.queue.length; i++) {
+        queueEmbed.addField(i + 1, server.queue[i].title);
+      }
+
+      message.channel.send(queueEmbed);
     }
   }
 };
