@@ -1,6 +1,6 @@
 # Norabot
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com)
 
 An in-development, all-in-one discord bot.
 
@@ -11,10 +11,6 @@ An in-development, all-in-one discord bot.
  - Revamped addroles
  - Server Welcome Message </br>
  - Custom Database for Custom Server Parameters (Welcome message, etc) (✓) </br>
-   **v1.3.0 RELEASE**
- - LoL Support </br>
-   **v1.4.0 RELEASE**
- - Maplestory Support </br>
 
 ## License: AGPL-3.0+
 
