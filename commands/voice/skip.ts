@@ -1,41 +1,19 @@
-/**
- * norabot: a multi-purpose Discord bot
- *
- * Copyright (C) 2018 by nitroignika
- *
- * This file is part of norabot.
- *
- * norabot application is free software: you can redistribute
- * it and/or modify it under the terms of the GNU Affero General Public
- * License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
- *
- * norabot application is distributed in the hope that it will
- * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU A General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with norabot.  If not, see <http://www.gnu.org/licenses/>.
- * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
- */
-
 import { Message } from "discord.js";
 import { servers } from "../../index";
 import { isUndefined } from "../../utils";
+import Command from "../../types/Command";
 
-module.exports = {
+module.exports = new Command({
   name: "skip",
   description: "Skip to the next song in queue",
   aliases: ["s"],
   usage: `v?skip`,
   guildOnly: true,
-  adminRequired: false,
-  argsRequired: false,
+  voiceRequired: true,
   execute(message: Message) {
     if (message.member.voiceChannel) {
       if (!servers[message.guild.id]) {
-        servers[message.guild.id] = { queue: [] };
+        servers[message.guild.id] = { queue: [], boombox: false };
 
         message.reply("Nothing in queue!");
       } else {
@@ -49,4 +27,4 @@ module.exports = {
       message.reply("You aren't in a voice channel!");
     }
   }
-};
+});

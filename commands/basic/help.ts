@@ -1,40 +1,14 @@
-/**
- * norabot: a multi-purpose Discord bot
- *
- * Copyright (C) 2018 by nitroignika
- *
- * This file is part of norabot.
- *
- * norabot application is free software: you can redistribute
- * it and/or modify it under the terms of the GNU Affero General Public
- * License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
- *
- * norabot application is distributed in the hope that it will
- * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU A General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with norabot.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
- */
-
 import { prefix } from "../../config.json";
 import { commandCfg } from "../../index";
 import Discord, { Message } from "discord.js";
 import * as fs from "fs";
+import Command from "../../types/Command";
 
-module.exports = {
+module.exports = new Command({
   name: "help",
   description: "Lists all commands, or specific info for a command",
   aliases: ["commands"],
-  usage: "b?help {command}",
-  cooldown: 0,
-  guildOnly: false,
-  adminReq: false,
-  argsRequired: false,
+  usage: "[command]",
   execute(message: Message, args: string[]) {
     var commands = new Map();
     var aliases = new Map();
@@ -108,4 +82,4 @@ module.exports = {
 
     message.channel.send(embed);
   }
-};
+});

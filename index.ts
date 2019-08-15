@@ -22,9 +22,11 @@ import { VoiceConnection } from "discord.js";
  * @license AGPL-3.0+ <http://spdx.org/licenses/AGPL-3.0+>
  */
 
+// Libraries
 import * as fs from "fs";
 import * as Discord from "discord.js";
-import { prefix, token, deleteTimer } from "./config.json";
+
+// Types & Utilities
 import {
   isUndefined,
   isNull,
@@ -32,62 +34,42 @@ import {
   isNumber,
   deleteMessage
 } from "./utils";
+import Command from "./types/Command";
+// import NoraClient from "./types/NoraClient";
+import AudioLength from "./types/AudioLength";
+
+// Configuration
+import { prefix, token, deleteTimer } from "./config.json";
 import commandConfig from "./commands.json";
 
+// Create server data mapping
 export let servers: {
   [guildId: string]: {
-    queue: { url: string; title: string }[];
+    queue: {
+      url: string;
+      title: string;
+      thumbnailUrl: string;
+      authorUrl: string;
+      length: AudioLength;
+    }[];
     dispatcher?: Discord.StreamDispatcher;
+    boombox: boolean;
   };
 } = {};
 
-export const commandCfg: {
-  [index: string]: { prefix: string; group: string };
-} = commandConfig;
-
-export class Command {
-  name: string;
-  description: string;
-  aliases: string[] | undefined;
-  usage: string;
-  guildOnly: boolean;
-  adminRequired: boolean;
-  argsRequired: boolean;
-  cooldown: number;
-  execute: (message: Discord.Message, args?: string[]) => void;
-  constructor(props: {
-    name: string;
-    description: string;
-    aliases: string[] | undefined;
-    usage: string;
-    guildOnly: boolean;
-    adminReq: boolean;
-    argsRequired: boolean;
-    cooldown: number;
-    execute: (message: Discord.Message, args?: string[]) => void;
-  }) {
-    this.name = props.name;
-    this.description = props.description;
-    this.aliases = props.aliases;
-    this.usage = props.usage;
-    this.guildOnly = props.guildOnly;
-    this.adminRequired = props.adminReq;
-    this.execute = props.execute;
-    this.argsRequired = props.argsRequired;
-    this.cooldown = props.cooldown;
-  }
-}
-
 export class NoraClient extends Discord.Client {
-  handler: any; //Rip no types in reaction-core
+  handler: any;
   prefixes: Discord.Collection<
     string,
     Discord.Collection<string, string | Command>
   >;
-  constructor(props: Discord.ClientOptions) {
-    super(props);
+  constructor(props: {
+    clientOptions: Discord.ClientOptions;
+    commandFolder: string;
+  }) {
+    super(props.clientOptions);
     this.prefixes = new Discord.Collection();
-    const commandFolders: string[] = fs.readdirSync("./commands");
+    const commandFolders: string[] = fs.readdirSync(props.commandFolder);
 
     for (const folder of commandFolders) {
       const commands: Discord.Collection<
@@ -107,8 +89,17 @@ export class NoraClient extends Discord.Client {
   }
 }
 
-const client = new NoraClient({ sync: true });
+// Create command configuration
+export const commandCfg: {
+  [index: string]: { prefix: string; group: string };
+} = commandConfig;
 
+const client = new NoraClient({
+  clientOptions: { sync: true },
+  commandFolder: "./commands"
+});
+
+// Cooldown Mapping
 const cooldowns: Discord.Collection<
   string,
   Discord.Collection<string, number>
@@ -187,6 +178,17 @@ client.on("message", message => {
   // Handle commands w/o cooldowns
   if (!cooldowns.has(command.name)) {
     cooldowns.set(command.name, new Discord.Collection());
+  }
+
+  if (command.voiceRequired) {
+    // Add to registry if not already there
+    if (!servers[message.guild.id]) {
+      servers[message.guild.id] = { queue: [], boombox: false };
+    }
+    // Return if the user is nohttps://www.youtube.com/watch?v=LwFBz2_qQfkt in a voice channel
+    if (!message.member.voiceChannel) {
+      return message.channel.send("You need to be in a voice channel!");
+    }
   }
 
   const now = Date.now();
